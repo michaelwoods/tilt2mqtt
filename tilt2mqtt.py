@@ -76,12 +76,16 @@ TILTS = {
         'a495bb80c5b14b44b5121370f02d74de': 'Pink',
 }
 
+user = os.getenv('MQTT_USER', None)
+password = os.getenv('MQTT_PASSWORD', None)
+
 # MQTT Settings
 config = {
         'host': os.getenv('MQTT_IP', '127.0.0.1'),
-        'port':int(os.getenv('MQTT_PORT', 1883)),
-        'auth':os.getenv('MQTT_AUTH', None),
-        'debug': os.getenv('MQTT_DEBUG', True),
+        'port': int(os.getenv('MQTT_PORT', 1883)),
+        'auth': ({'username': user, 'password': password}, None) [user is None or password is None],
+        'debug': os.getenv('DEBUG', True),
+        'interval': int(os.getenv('SCAN_INTERVAL', 60*30)),
 }
 
 def callback(bt_addr, rssi, packet, additional_info):
@@ -138,4 +142,4 @@ while(1):
     monitor.toggle_scan(False)
 
     # Wait until next scan periode
-    time.sleep(sleep_interval)
+    time.sleep(config['interval'])
